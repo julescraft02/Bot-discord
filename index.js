@@ -19,6 +19,7 @@ client.once("disconnect", () => {
         console.log("Disconnect!");
 });
 
+
 client.on("message", async message => {
         if (message.author.bot) {
                 return;
@@ -33,6 +34,16 @@ client.on("message", async message => {
                 execute(message, serverQueue); // On appel execute qui soit initialise et lance la musique soit ajoute à la queue la musique
                 return;
         }
+        if (message.content.startsWith(`${prefix}mathilde`)) {
+                message.channel.send('putain tabuse')
+                return;
+        } 
+        if (message.content === prefix + 'ping') {
+            message.channel.send('sois patient enculé').then (async (msg) =>{
+              msg.edit(`***PONG*** 🏓 La latence est de ${msg.createdTimestamp - message.createdTimestamp}ms. La lattence API est de ${Math.round(client.ws.ping)}ms.`);
+            
+            })
+            }
         else if (message.content.startsWith(`${prefix}skip`)) {
                 skip(message, serverQueue); // Permettra de passer à la musique suivante
                 return;
@@ -41,8 +52,21 @@ client.on("message", async message => {
                 stop(message, serverQueue); // Permettra de stopper la lecture
                 return;
         }
+        else if (message.content.startsWith(`${prefix}pause`)) {
+                if(!serverQueue.connection)
+                return message.channel.send('Ya pas de musqiue abrutit!')
+                serverQueue.connection.dispatcher.pause();
+                message.channel.send('c bon')
+        }
+        else if (message.content.startsWith(`${prefix}resume`)) {
+                if(!serverQueue.connection)
+                 return message.channel.send('Ya pas de musqiue abrutit!')
+                serverQueue.connection.dispatcher.resume();
+                 message.channel.send('c bon')
+
+        } 
         else {
-                message.channel.send("You need to enter a valid command!");
+                message.channel.send("apprend à parler ilétré de merde!");
         }
 
 });
@@ -54,7 +78,7 @@ async function execute(message, serverQueue) {
         if (!voiceChannel) // Si l'utilisateur n'est pas dans un salon vocal
         {
                 return message.channel.send(
-                    "Vous devez être dans un salon vocal!"
+                    "Va dans un voc avant d'ouvrir ta grande geule!"
                 );
         }
         const permissions = voiceChannel.permissionsFor(message.client.user); // On récupère les permissions du bot pour le salon vocal
@@ -102,7 +126,7 @@ async function execute(message, serverQueue) {
         else {
                 serverQueue.songs.push(song);
                 console.log(serverQueue.songs);
-                return message.channel.send(`${song.title} has been added to the queue!`);
+                return message.channel.send(`${song.title} a été ajouté à ta putain de liste!`);
         }
 
 }
@@ -111,12 +135,12 @@ function skip(message, serverQueue) {
         if (!message.member.voice.channel) // on vérifie que l'utilisateur est bien dans un salon vocal pour skip
         {
                 return message.channel.send(
-                    "Vous devez être dans un salon vocal pour passer une musique!"
+                    "Va dans un voc avant d'ouvrir ta grande geule!"
                 );
         }
         if (!serverQueue) // On vérifie si une musique est en cours
         {
-                return message.channel.send("Aucune lecture de musique en cours !");
+                return message.channel.send("bah ya pas de musique enculé !");
         }
         serverQueue.connection.dispatcher.end(); // On termine la musique courante, ce qui lance la suivante grâce à l'écoute d'événement
                                                  // finish
@@ -126,12 +150,12 @@ function stop(message, serverQueue) {
         if (!message.member.voice.channel) // on vérifie que l'utilisateur est bien dans un salon vocal pour skip
         {
                 return message.channel.send(
-                    "Vous devez être dans un salon vocal pour stopper la lecture!"
+                    "Va dans un voc avant d'ouvrir ta grande geule!"
                 );
         }
         if (!serverQueue) // On vérifie si une musique est en cours
         {
-                return message.channel.send("Aucune lecture de musique en cours !");
+                return message.channel.send("bah ya pas de musique enculé !");
         }
         serverQueue.songs = [];
         serverQueue.connection.dispatcher.end();
@@ -154,7 +178,9 @@ function play(guild, song) {
             })
             .on("error", error => console.error(error));
         dispatcher.setVolume(1); // On définie le volume
-        serverQueue.textChannel.send(`Démarrage de la musique: **${song.title}**`);
+        serverQueue.textChannel.send(`V'là ta musique de merde: **${song.title}**`);
+        
 }
 
-client.login(process.env.TOKEN);
+
+client.login(token);
