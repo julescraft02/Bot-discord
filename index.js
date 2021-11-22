@@ -183,4 +183,4 @@ function play(guild, song) {
 }
 
 
-client.login(process.env.TOKEN);
+client.login(token);
